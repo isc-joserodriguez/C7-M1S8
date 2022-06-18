@@ -37,17 +37,7 @@ const inputNombre = document.getElementById('inputNombre');
 const inputApellido = document.getElementById('inputApellido');
 const inputTelefono = document.getElementById('inputTelefono');
 const bodyTabla = document.getElementById('body-tabla');
-const contactos = [{
-    nombre: 'Maria',
-    apellido: 'Lopez',
-    telefono: '1256432184',
-},
-{
-    nombre: 'Maria',
-    apellido: 'Lopez',
-    telefono: '9923432184',
-},
-];
+let contactos = [];
 
 
 function agregarContacto(nombre, apellido, telefono) {
@@ -59,8 +49,8 @@ function agregarContacto(nombre, apellido, telefono) {
 }
 
 function eliminarContacto(indice) {
-
-    contactos.splice(indice, 1)
+    contactos.splice(indice, 1);
+    mostrarContactos();
 }
 
 function mostrarContactos() {
@@ -73,20 +63,37 @@ function mostrarContactos() {
         <td>${contacto.telefono}</td>
         <td>
         <button class="btn btn-warning" onclick="editarContacto(${indice})">editar</button>
-        <button class="btn btn-danger">eliminar</button>        
+        <button class="btn btn-warning" onclick="editarContactoPrompt(${indice}, prompt('Ingresa nombre'), prompt('Apellido'), prompt('telefono'))">editar</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Editar
+</button>
+        <button class="btn btn-danger" onclick="eliminarContacto(${indice})">eliminar</button>        
         </td>
         </tr>`
     })
+    guardarContactosStorage();
 }
 
 function editarContacto(indice) {
     contactos[indice].nombre = prompt('Ingresa un nuevo nombre.');
     contactos[indice].apellido = prompt('Ingresa un nuevo apellido.');
     contactos[indice].telefono = prompt('Ingresa un nuevo telefono.');
-
     mostrarContactos();
 }
 
+function editarContactoPrompt(indice, nombre, apellido, telefono) {
+    /* contactos[indice].nombre = nombre;
+    contactos[indice].apellido = apellido;
+    contactos[indice].telefono = telefono; */
+
+    contactos[indice] = {
+        nombre: nombre,
+        apellido,
+        telefono,
+    }
+
+    mostrarContactos();
+}
 
 contactoForm.addEventListener('submit', function (event) {
     event.preventDefault();
@@ -108,4 +115,27 @@ contactoForm.addEventListener('submit', function (event) {
     }
 });
 
+
+
+
+function guardarContactosStorage() {
+    const contactosGuardar = JSON.stringify(contactos);
+    localStorage.setItem('contactos', contactosGuardar);
+}
+
+function obtenerContactosStorage() {
+    const contactosStorage = localStorage.getItem('contactos');
+    /* if (contactosStorage == null) {
+        contactos = [];
+    } else {
+        contactos = JSON.parse(contactosStorage);
+    } */
+    //Operador ternario
+    contactos = contactosStorage == null ? [] : JSON.parse(contactosStorage);
+}
+
+
+
+
+obtenerContactosStorage()
 mostrarContactos();
